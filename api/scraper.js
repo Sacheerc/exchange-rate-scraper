@@ -37,12 +37,15 @@ router.get('/store-rates', async (req, res) => {
     const rateList = await fetchData();
 
     if (rateList && rateList.length > 0) {
-      const ratesRef = db.collection('exchange-rates');
+      const batch = db.batch();
 
       //Store fetched rates in fireStore
-      await rateList.forEach((rate) => {
-        ratesRef.doc(rate.currency).set(rate);
+      rateList.forEach((rate) => {
+        const ref = db.collection('exchange-rates').doc(rate.currency);
+        batch.update(ref, rate);
       });
+
+      await batch.commit();
     }
     res.json({ status: 200, message: rateList });
   } catch (error) {
