@@ -1,0 +1,14 @@
+name: exchange-rate-scheduler
+on:
+  schedule:
+    - cron: '31 18 * * *'
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: call store-rates end point
+        run: |
+          curl --request GET \
+          --url 'https://exchange-rate-scraper.vercel.app/api/scraper/store-rates' \
+          --header 'Authorization: Bearer'
+          
